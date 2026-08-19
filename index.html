@@ -30,7 +30,9 @@
     align-items:center;
     padding: 10vh 20px 40px;
     position:relative;
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj48cmVjdCB4PSI5IiB5PSIxIiB3aWR0aD0iMiIgaGVpZ2h0PSI2IiBmaWxsPSJibGFjayIvPjxyZWN0IHg9IjkiIHk9IjEzIiB3aWR0aD0iMiIgaGVpZ2h0PSI2IiBmaWxsPSJibGFjayIvPjxyZWN0IHg9IjEiIHk9IjkiIHdpZHRoPSI2IiBoZWlnaHQ9IjIiIGZpbGw9ImJsYWNrIi8+PHJlY3QgeD0iMTMiIHk9IjkiIHdpZHRoPSI2IiBoZWlnaHQ9IjIiIGZpbGw9ImJsYWNrIi8+PHJlY3QgeD0iOS41IiB5PSIxLjUiIHdpZHRoPSIxIiBoZWlnaHQ9IjUiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iOS41IiB5PSIxMy41IiB3aWR0aD0iMSIgaGVpZ2h0PSI1IiBmaWxsPSJ3aGl0ZSIvPjxyZWN0IHg9IjEuNSIgeT0iOS41IiB3aWR0aD0iNSIgaGVpZ2h0PSIxIiBmaWxsPSJ3aGl0ZSIvPjxyZWN0IHg9IjEzLjUiIHk9IjkuNSIgd2lkdGg9IjUiIGhlaWdodD0iMSIgZmlsbD0id2hpdGUiLz48L3N2Zz4=") 10 10, auto;
   }
+  input, textarea{ cursor: text; }
 
   #particleCanvas{
     position:fixed;
@@ -635,9 +637,23 @@
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, points = [];
-    const spacing = 42;
-    const glowRadius = 130;
+    const spacing = 46;
+    const glowRadius = 160;
+    const linkRadius = 95;
     const mouse = { x: -9999, y: -9999 };
+    let mx = -9999, my = -9999; // smoothed cursor position
+
+    // Read the current accent color from CSS so this always matches the theme
+    function getAccentRGB(){
+      const probe = document.createElement('div');
+      probe.style.color = 'var(--cyan)';
+      probe.style.display = 'none';
+      document.body.appendChild(probe);
+      const rgb = getComputedStyle(probe).color.match(/\d+/g);
+      document.body.removeChild(probe);
+      return rgb ? rgb.slice(0, 3).join(',') : '229,56,59';
+    }
+    const accent = getAccentRGB();
 
     function resize(){
       w = canvas.width = window.innerWidth;
@@ -645,7 +661,12 @@
       points = [];
       for(let x = spacing / 2; x < w; x += spacing){
         for(let y = spacing / 2; y < h; y += spacing){
-          points.push({ x, y, jitter: Math.random() * Math.PI * 2 });
+          points.push({
+            x, y,
+            jitter: Math.random() * Math.PI * 2,
+            ox: (Math.random() - 0.5) * 6,
+            oy: (Math.random() - 0.5) * 6
+          });
         }
       }
     }
@@ -659,25 +680,64 @@
 
     let t = 0;
     function draw(){
-      t += 0.02;
+      t += 0.015;
+      // smooth/ease the cursor position for a softer, trailing feel
+      mx += (mouse.x - mx) * 0.12;
+      my += (mouse.y - my) * 0.12;
+
       ctx.clearRect(0, 0, w, h);
+
+      // Nearby particles link together near the cursor
+      const near = [];
       for(const p of points){
-        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const dx = p.x - mx, dy = p.y - my;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if(dist < linkRadius) near.push({ p, dist });
+      }
+      for(let i = 0; i < near.length; i++){
+        for(let j = i + 1; j < near.length; j++){
+          const a = near[i].p, b = near[j].p;
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if(d < 60){
+            const fade = (1 - d / 60) * (1 - near[i].dist / linkRadius) * (1 - near[j].dist / linkRadius);
+            ctx.strokeStyle = `rgba(${accent},${fade * 0.5})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Particles themselves, softly drifting and glowing near the cursor
+      for(const p of points){
+        const drift = Math.sin(t + p.jitter);
+        const px = p.x + p.ox * drift;
+        const py = p.y + p.oy * Math.cos(t * 0.8 + p.jitter);
+
+        const dx = px - mx, dy = py - my;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const intensity = Math.max(0, 1 - dist / glowRadius);
-        const ambient = 0.5 + Math.sin(t + p.jitter) * 0.15;
-        const alpha = 0.08 * ambient + intensity * 0.9;
-        const size = 1 + intensity * 2.8;
+        const eased = intensity * intensity * (3 - 2 * intensity); // smoothstep
+        const ambient = 0.55 + drift * 0.15;
+        const size = 1 + eased * 3.2;
+        const alpha = 0.09 * ambient + eased * 0.85;
+
+        if(eased > 0.03){
+          const glow = ctx.createRadialGradient(px, py, 0, px, py, size * 4);
+          glow.addColorStop(0, `rgba(${accent},${alpha})`);
+          glow.addColorStop(1, `rgba(${accent},0)`);
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(px, py, size * 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
 
         ctx.beginPath();
-        if(intensity > 0.04){
-          ctx.shadowBlur = 14 * intensity;
-          ctx.shadowColor = 'rgba(229,56,59,0.9)';
-        }else{
-          ctx.shadowBlur = 0;
-        }
-        ctx.fillStyle = `rgba(229,56,59,${alpha})`;
-        ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${accent},${alpha})`;
+        ctx.arc(px, py, size, 0, Math.PI * 2);
         ctx.fill();
       }
       requestAnimationFrame(draw);

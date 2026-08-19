@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F1216;
+    --panel: #1A1F26;
+    --border: #2A313B;
+    --cyan: #5EEAD4;
+    --amber: #F5A524;
+    --red: #F0574D;
+    --text: #E6E9EE;
+    --muted: #7A8494;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 10vh 20px 40px;
+  }
+
+  .clock{
+    font-family:'Chakra Petch', sans-serif;
+    font-size:46px;
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+  .date{
+    font-size:13px;
+    color: var(--muted);
+    margin-top:4px;
+    margin-bottom:36px;
+    letter-spacing:0.04em;
+  }
+
+  .search-wrap{ width:100%; max-width:560px; margin-bottom:28px; }
+  .search-console{
+    display:flex;
+    align-items:center;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding: 4px 6px 4px 16px;
+    transition: border-color .15s ease;
+  }
+  .search-console:focus-within{ border-color: var(--cyan); }
+  .search-console input{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:15px;
+    padding:13px 0;
+  }
+  .search-console input::placeholder{ color: var(--muted); }
+  .search-console button{
+    background: var(--cyan);
+    color:#0F1216;
+    border:none;
+    border-radius:7px;
+    font-family:'Chakra Petch', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    padding: 10px 18px;
+    cursor:pointer;
+  }
+  .search-console button:hover{ opacity:0.85; }
+
+  .stats{
+    width:100%;
+    max-width:560px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:10px;
+  }
+  .stat{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+  }
+  .stat .label{
+    font-size:10.5px;
+    color: var(--muted);
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+  }
+  .stat .value{
+    font-family:'Chakra Petch', sans-serif;
+    font-size:24px;
+    font-weight:600;
+  }
+  .stat .value.good{ color: var(--cyan); }
+  .stat .value.warn{ color: var(--amber); }
+  .stat .value.bad{ color: var(--red); }
+  .stat .sub{ font-size:10px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="clock" id="clock">--:--</div>
+<div class="date" id="date">loading</div>
+
+<div class="search-wrap">
+  <form class="search-console" id="searchForm">
+    <input type="text" id="searchInput" placeholder="Search Brave..." autofocus autocomplete="off">
+    <button type="submit">Search</button>
+  </form>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <span class="label">Ping</span>
+    <span class="value" id="pingValue">--</span>
+    <span class="sub" id="pingSub">measuring</span>
+  </div>
+  <div class="stat">
+    <span class="label">Refresh Rate</span>
+    <span class="value" id="fpsValue">--</span>
+    <span class="sub">Hz (est.)</span>
+  </div>
+  <div class="stat">
+    <span class="label">Connection</span>
+    <span class="value" id="statusValue">--</span>
+    <span class="sub" id="statusSub">checking</span>
+  </div>
+</div>
+
+<script>
+  // Clock
+  function tick(){
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('clock').textContent = `${h}:${m}`;
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('date').textContent =
+      `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // Search
+  document.getElementById('searchForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const q = document.getElementById('searchInput').value.trim();
+    if(!q) return;
+    window.open('https://search.brave.com/search?q=' + encodeURIComponent(q), '_blank');
+  });
+
+  // Ping test - measures round-trip time to a lightweight endpoint
+  const pingEl = document.getElementById('pingValue');
+  const pingSubEl = document.getElementById('pingSub');
+  async function measurePing(){
+    const start = performance.now();
+    try{
+      await fetch('https://www.gstatic.com/generate_204', { mode: 'no-cors', cache: 'no-store' });
+      const ms = Math.round(performance.now() - start);
+      pingEl.textContent = ms;
+      pingEl.className = 'value ' + (ms < 60 ? 'good' : ms < 150 ? 'warn' : 'bad');
+      pingSubEl.textContent = 'ms';
+    }catch(err){
+      pingEl.textContent = '--';
+      pingEl.className = 'value bad';
+      pingSubEl.textContent = 'unreachable';
+    }
+  }
+  measurePing();
+  setInterval(measurePing, 4000);
+
+  // Refresh rate estimate via requestAnimationFrame sampling
+  const fpsEl = document.getElementById('fpsValue');
+  let frameCount = 0;
+  let fpsWindowStart = performance.now();
+  function fpsLoop(now){
+    frameCount++;
+    const elapsed = now - fpsWindowStart;
+    if(elapsed >= 1000){
+      fpsEl.textContent = Math.round((frameCount * 1000) / elapsed);
+      frameCount = 0;
+      fpsWindowStart = now;
+    }
+    requestAnimationFrame(fpsLoop);
+  }
+  requestAnimationFrame(fpsLoop);
+
+  // Online/offline status
+  const statusEl = document.getElementById('statusValue');
+  const statusSubEl = document.getElementById('statusSub');
+  function updateStatus(){
+    const online = navigator.onLine;
+    statusEl.textContent = online ? 'UP' : 'DOWN';
+    statusEl.className = 'value ' + (online ? 'good' : 'bad');
+    statusSubEl.textContent = online ? 'connected' : 'offline';
+  }
+  updateStatus();
+  window.addEventListener('online', updateStatus);
+  window.addEventListener('offline', updateStatus);
+</script>
+
+</body>
+</html>

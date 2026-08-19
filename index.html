@@ -19,6 +19,7 @@
     --muted: #7A8494;
   }
   *{ margin:0; padding:0; box-sizing:border-box; }
+  html, body{ height:100%; }
   body{
     background: var(--bg);
     color: var(--text);
@@ -28,7 +29,80 @@
     flex-direction:column;
     align-items:center;
     padding: 10vh 20px 40px;
+    position:relative;
   }
+
+  /* Wallpaper layer */
+  #wallpaper{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+  }
+  #wallpaper::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: rgba(10,12,15,0.45);
+  }
+  body.has-wallpaper .search-console,
+  body.has-wallpaper .stat{
+    background: rgba(26,31,38,0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Settings control */
+  .settings-btn{
+    position:fixed;
+    top:18px;
+    right:18px;
+    width:36px;
+    height:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:50%;
+    color: var(--muted);
+    cursor:pointer;
+    font-size:16px;
+    transition: color .15s ease, border-color .15s ease, transform .2s ease;
+    z-index:10;
+  }
+  .settings-btn:hover{ color: var(--cyan); border-color: var(--cyan); transform: rotate(35deg); }
+
+  .settings-menu{
+    position:fixed;
+    top:62px;
+    right:18px;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:8px;
+    display:none;
+    flex-direction:column;
+    gap:4px;
+    min-width:170px;
+    z-index:10;
+  }
+  .settings-menu.open{ display:flex; }
+  .settings-menu button{
+    background:transparent;
+    border:none;
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:13px;
+    text-align:left;
+    padding:8px 10px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .settings-menu button:hover{ background: var(--panel-hover, #232b36); color: var(--cyan); }
+  .settings-menu button.danger:hover{ color: var(--red); }
 
   .clock{
     font-family:'Chakra Petch', sans-serif;
@@ -114,6 +188,15 @@
 </style>
 </head>
 <body>
+
+<div id="wallpaper"></div>
+
+<button class="settings-btn" id="settingsBtn" title="Settings">⚙</button>
+<div class="settings-menu" id="settingsMenu">
+  <button id="changeWallpaperBtn">Change wallpaper</button>
+  <button id="removeWallpaperBtn" class="danger">Remove wallpaper</button>
+</div>
+<input type="file" id="wallpaperInput" accept="image/*" style="display:none">
 
 <div class="clock" id="clock">--:--</div>
 <div class="date" id="date">loading</div>
@@ -214,6 +297,63 @@
   updateStatus();
   window.addEventListener('online', updateStatus);
   window.addEventListener('offline', updateStatus);
+
+  // Custom wallpaper
+  const wallpaperEl = document.getElementById('wallpaper');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsMenu = document.getElementById('settingsMenu');
+  const wallpaperInput = document.getElementById('wallpaperInput');
+  const changeWallpaperBtn = document.getElementById('changeWallpaperBtn');
+  const removeWallpaperBtn = document.getElementById('removeWallpaperBtn');
+
+  function applyWallpaper(dataUrl){
+    if(dataUrl){
+      wallpaperEl.style.backgroundImage = `url(${dataUrl})`;
+      document.body.classList.add('has-wallpaper');
+    }else{
+      wallpaperEl.style.backgroundImage = '';
+      document.body.classList.remove('has-wallpaper');
+    }
+  }
+
+  // Load saved wallpaper on start
+  try{
+    const saved = localStorage.getItem('ntWallpaper');
+    if(saved) applyWallpaper(saved);
+  }catch(err){ /* localStorage unavailable */ }
+
+  settingsBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    settingsMenu.classList.toggle('open');
+  });
+  document.addEventListener('click', (e)=>{
+    if(!settingsMenu.contains(e.target) && e.target !== settingsBtn){
+      settingsMenu.classList.remove('open');
+    }
+  });
+
+  changeWallpaperBtn.addEventListener('click', ()=>{
+    wallpaperInput.click();
+    settingsMenu.classList.remove('open');
+  });
+
+  wallpaperInput.addEventListener('change', ()=>{
+    const file = wallpaperInput.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const dataUrl = e.target.result;
+      applyWallpaper(dataUrl);
+      try{ localStorage.setItem('ntWallpaper', dataUrl); }catch(err){ /* storage full or unavailable */ }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  removeWallpaperBtn.addEventListener('click', ()=>{
+    applyWallpaper(null);
+    try{ localStorage.removeItem('ntWallpaper'); }catch(err){}
+    settingsMenu.classList.remove('open');
+  });
 </script>
 
 </body>

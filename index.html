@@ -61,6 +61,31 @@
     -webkit-backdrop-filter: blur(10px);
   }
 
+  .clock, .date{ text-shadow: 0 1px 8px rgba(0,0,0,0.55); }
+
+  /* Adaptive text for light wallpapers */
+  body.light-wallpaper{
+    --text: #1B2027;
+    --muted: #4B5563;
+  }
+  body.light-wallpaper .clock,
+  body.light-wallpaper .date{
+    text-shadow: 0 1px 8px rgba(255,255,255,0.65);
+  }
+  body.light-wallpaper .search-console,
+  body.light-wallpaper .stat,
+  body.light-wallpaper .chat-panel,
+  body.light-wallpaper .settings-menu,
+  body.light-wallpaper .chat-toggle,
+  body.light-wallpaper .settings-btn{
+    background: rgba(255,255,255,0.65);
+    border-color: rgba(0,0,0,0.14);
+  }
+  body.light-wallpaper .chat-msg.assistant{
+    background: rgba(0,0,0,0.08);
+  }
+  body.light-wallpaper .search-console input::placeholder{ color: #6B7684; }
+
   /* Settings control */
   .settings-btn{
     position:fixed;
@@ -445,10 +470,34 @@
     if(dataUrl){
       wallpaperEl.style.backgroundImage = `url(${dataUrl})`;
       document.body.classList.add('has-wallpaper');
+      detectBrightness(dataUrl);
     }else{
       wallpaperEl.style.backgroundImage = '';
       document.body.classList.remove('has-wallpaper');
+      document.body.classList.remove('light-wallpaper');
     }
+  }
+
+  function detectBrightness(dataUrl){
+    const img = new Image();
+    img.onload = function(){
+      const size = 40;
+      const c = document.createElement('canvas');
+      c.width = size; c.height = size;
+      const cctx = c.getContext('2d');
+      cctx.drawImage(img, 0, 0, size, size);
+      let pixels;
+      try{ pixels = cctx.getImageData(0, 0, size, size).data; }
+      catch(err){ return; } // can't read pixels, skip detection
+
+      let total = 0;
+      for(let i = 0; i < pixels.length; i += 4){
+        total += 0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2];
+      }
+      const avg = total / (pixels.length / 4);
+      document.body.classList.toggle('light-wallpaper', avg > 150);
+    };
+    img.src = dataUrl;
   }
 
   // Load saved wallpaper on start

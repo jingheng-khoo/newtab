@@ -325,7 +325,7 @@
     <button id="chatClose">✕</button>
   </div>
   <div class="chat-messages" id="chatMessages">
-    <div class="chat-msg system">Add your OpenAI API key via the gear menu to start chatting.</div>
+    <div class="chat-msg system">Add your free Groq API key via the gear menu to start chatting.</div>
   </div>
   <div class="chat-input-row">
     <input type="text" id="chatInput" placeholder="Ask anything..." autocomplete="off">
@@ -515,7 +515,7 @@
   });
 
   setApiKeyBtn.addEventListener('click', ()=>{
-    const key = prompt('Enter your OpenAI API key (from platform.openai.com/api-keys).\nIt is stored only in this browser and sent directly to OpenAI\u2019s API.');
+    const key = prompt('Enter your free Groq API key (from console.groq.com/keys \u2014 no credit card needed).\nIt is stored only in this browser and sent directly to Groq\u2019s API.');
     if(key){
       apiKey = key.trim();
       try{ localStorage.setItem('ntApiKey', apiKey); }catch(err){}
@@ -537,7 +537,7 @@
     const text = chatInput.value.trim();
     if(!text) return;
     if(!apiKey){
-      addMsg('system', 'Set your API key first (gear icon \u2192 Set AI API key).');
+      addMsg('system', 'Set your free API key first (gear icon \u2192 Set AI API key).');
       return;
     }
     addMsg('user', text);
@@ -547,14 +547,14 @@
     const thinkingEl = addMsg('assistant', 'thinking...');
 
     try{
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
           'authorization': 'Bearer ' + apiKey
         },
         body: JSON.stringify({
-          model: 'gpt-5.6-terra',
+          model: 'llama-3.3-70b-versatile',
           messages: history
         })
       });

@@ -12,7 +12,7 @@
     --bg: #0F1216;
     --panel: #1A1F26;
     --border: #2A313B;
-    --cyan: #5EEAD4;
+    --cyan: #FF4655;
     --amber: #F5A524;
     --red: #F0574D;
     --text: #E6E9EE;
@@ -324,7 +324,7 @@
     font-size:24px;
     font-weight:600;
   }
-  .stat .value.good{ color: var(--cyan); }
+  .stat .value.good{ color: #4ADE80; }
   .stat .value.warn{ color: var(--amber); }
   .stat .value.bad{ color: var(--red); }
   .stat .sub{ font-size:10px; color: var(--muted); }
@@ -672,11 +672,11 @@
         ctx.beginPath();
         if(intensity > 0.04){
           ctx.shadowBlur = 14 * intensity;
-          ctx.shadowColor = 'rgba(94,234,212,0.9)';
+          ctx.shadowColor = 'rgba(255,70,85,0.9)';
         }else{
           ctx.shadowBlur = 0;
         }
-        ctx.fillStyle = `rgba(94,234,212,${alpha})`;
+        ctx.fillStyle = `rgba(255,70,85,${alpha})`;
         ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
         ctx.fill();
       }

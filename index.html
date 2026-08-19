@@ -325,7 +325,7 @@
     <button id="chatClose">✕</button>
   </div>
   <div class="chat-messages" id="chatMessages">
-    <div class="chat-msg system">Add your Gemini API key via the gear menu to start chatting.</div>
+    <div class="chat-msg system">Add your OpenAI API key via the gear menu to start chatting.</div>
   </div>
   <div class="chat-input-row">
     <input type="text" id="chatInput" placeholder="Ask anything..." autocomplete="off">
@@ -515,7 +515,7 @@
   });
 
   setApiKeyBtn.addEventListener('click', ()=>{
-    const key = prompt('Enter your Gemini API key (from aistudio.google.com/apikey).\nIt is stored only in this browser and sent directly to Google\u2019s API.');
+    const key = prompt('Enter your OpenAI API key (from platform.openai.com/api-keys).\nIt is stored only in this browser and sent directly to OpenAI\u2019s API.');
     if(key){
       apiKey = key.trim();
       try{ localStorage.setItem('ntApiKey', apiKey); }catch(err){}
@@ -541,29 +541,31 @@
       return;
     }
     addMsg('user', text);
-    history.push({ role: 'user', parts: [{ text }] });
+    history.push({ role: 'user', content: text });
     chatInput.value = '';
     chatSend.disabled = true;
     const thinkingEl = addMsg('assistant', 'thinking...');
 
     try{
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`,
-        {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ contents: history })
-        }
-      );
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': 'Bearer ' + apiKey
+        },
+        body: JSON.stringify({
+          model: 'gpt-5.6-terra',
+          messages: history
+        })
+      });
       const data = await res.json();
       if(data.error){
         thinkingEl.textContent = 'Error: ' + data.error.message;
         thinkingEl.classList.add('system');
       }else{
-        const reply = (data.candidates && data.candidates[0]?.content?.parts || [])
-          .map(p => p.text || '').join('\n') || '(no response)';
+        const reply = data.choices?.[0]?.message?.content || '(no response)';
         thinkingEl.textContent = reply;
-        history.push({ role: 'model', parts: [{ text: reply }] });
+        history.push({ role: 'assistant', content: reply });
       }
     }catch(err){
       thinkingEl.textContent = 'Request failed: ' + err.message;

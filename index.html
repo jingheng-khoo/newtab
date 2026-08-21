@@ -6,7 +6,7 @@
 <title>New Tab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #0F1216;
@@ -32,7 +32,15 @@
     position:relative;
     cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, auto;
   }
-  input, textarea{ cursor: text; }
+  input, textarea{
+    cursor: text;
+    caret-color: #ffffff;
+    caret-shape: block;
+  }
+  .search-console input,
+  .chat-input-row input{
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
 
   #particleCanvas{
     position:fixed;
@@ -243,6 +251,172 @@
   .chat-toggle:hover{ border-color: var(--cyan); color: var(--text); }
   .chat-toggle .dot{ width:6px; height:6px; border-radius:50%; background: var(--cyan); }
 
+  /* Calculator + Todo side toggles */
+  .side-toggle{
+    position:fixed;
+    bottom:20px;
+    background: var(--panel);
+    border:1px solid var(--border);
+    color: var(--muted);
+    font-family:'Inter', sans-serif;
+    font-size:13px;
+    font-weight:500;
+    padding:10px 16px;
+    border-radius:999px;
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
+    transition: border-color .15s ease, color .15s ease;
+    z-index:10;
+  }
+  .side-toggle:hover{ border-color: var(--cyan); color: var(--text); }
+  #calcToggle{ left:20px; }
+  #todoToggle{ right:20px; }
+
+  .side-panel{
+    position:fixed;
+    bottom:70px;
+    width:260px;
+    max-height:60vh;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    display:none;
+    flex-direction:column;
+    z-index:20;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    overflow:hidden;
+  }
+  .side-panel.open{ display:flex; }
+  #calcPanel{ left:20px; }
+  #todoPanel{ right:20px; }
+
+  .side-panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 14px;
+    border-bottom:1px solid var(--border);
+  }
+  .side-panel-head .title{
+    font-family:'Chakra Petch', sans-serif;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+  }
+  .side-panel-head button{
+    background:transparent;
+    border:none;
+    color: var(--muted);
+    font-size:15px;
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
+    line-height:1;
+  }
+  .side-panel-head button:hover{ color: var(--text); }
+
+  #calcDisplay{
+    padding:14px;
+    text-align:right;
+    font-family:'Chakra Petch', sans-serif;
+    font-size:24px;
+    font-weight:600;
+    color: var(--text);
+    background:#0F1216;
+    min-height:34px;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+  #calcExpr{
+    padding:0 14px;
+    text-align:right;
+    font-size:11px;
+    color: var(--muted);
+    min-height:14px;
+    background:#0F1216;
+  }
+  .calc-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:1px;
+    background: var(--border);
+    padding:1px;
+  }
+  .calc-grid button{
+    background: var(--panel);
+    border:none;
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:13px;
+    padding:11px 0;
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
+  }
+  .calc-grid button:hover{ background:#232b36; }
+  .calc-grid button.op{ color: var(--cyan); }
+  .calc-grid button.eq{ background: var(--cyan); color:#0F1216; font-weight:700; }
+  .calc-grid button.eq:hover{ opacity:0.85; background: var(--cyan); }
+  .calc-grid button.wide{ grid-column: span 2; }
+
+  .todo-input-row{
+    display:flex;
+    gap:6px;
+    padding:10px;
+    border-bottom:1px solid var(--border);
+  }
+  .todo-input-row input{
+    flex:1;
+    background:#0F1216;
+    border:1px solid var(--border);
+    border-radius:7px;
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:12.5px;
+    padding:8px 10px;
+    outline:none;
+  }
+  .todo-input-row input:focus{ border-color: var(--cyan); }
+  .todo-input-row button{
+    background: var(--cyan);
+    color:#0F1216;
+    border:none;
+    border-radius:7px;
+    font-family:'Chakra Petch', sans-serif;
+    font-weight:700;
+    font-size:12px;
+    padding:0 12px;
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
+  }
+  #todoList{
+    list-style:none;
+    overflow-y:auto;
+    padding:6px;
+  }
+  #todoList li{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 8px;
+    border-radius:7px;
+    font-size:12.5px;
+  }
+  #todoList li:hover{ background:#1F2530; }
+  #todoList li input[type=checkbox]{
+    accent-color: var(--cyan);
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
+  }
+  #todoList li span{ flex:1; word-break:break-word; }
+  #todoList li.done span{ text-decoration:line-through; color: var(--muted); }
+  #todoList li .del{
+    background:transparent;
+    border:none;
+    color: var(--muted);
+    font-size:13px;
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
+    opacity:0;
+    transition: opacity .1s ease;
+  }
+  #todoList li:hover .del{ opacity:1; }
+  #todoList li .del:hover{ color: var(--red); }
+  #todoEmpty{ padding:16px; text-align:center; color: var(--muted); font-size:12px; }
+
   .chat-panel{
     position:fixed;
     bottom:0;
@@ -357,6 +531,64 @@
     <input type="text" id="chatInput" placeholder="Ask anything..." autocomplete="off">
     <button id="chatSend">Send</button>
   </div>
+</div>
+
+<button class="side-toggle" id="calcToggle">Calc</button>
+<div class="side-panel" id="calcPanel">
+  <div class="side-panel-head">
+    <span class="title">Calculator</span>
+    <button id="calcClose">✕</button>
+  </div>
+  <div id="calcExpr"></div>
+  <div id="calcDisplay">0</div>
+  <div class="calc-grid">
+    <button data-fn="sin">sin</button>
+    <button data-fn="cos">cos</button>
+    <button data-fn="tan">tan</button>
+    <button id="calcClear">C</button>
+
+    <button data-fn="log">log</button>
+    <button data-fn="ln">ln</button>
+    <button data-fn="sqrt">√</button>
+    <button data-op="^">^</button>
+
+    <button data-val="(">(</button>
+    <button data-val=")">)</button>
+    <button data-fn="pi">π</button>
+    <button data-op="/" class="op">÷</button>
+
+    <button data-val="7">7</button>
+    <button data-val="8">8</button>
+    <button data-val="9">9</button>
+    <button data-op="*" class="op">×</button>
+
+    <button data-val="4">4</button>
+    <button data-val="5">5</button>
+    <button data-val="6">6</button>
+    <button data-op="-" class="op">−</button>
+
+    <button data-val="1">1</button>
+    <button data-val="2">2</button>
+    <button data-val="3">3</button>
+    <button data-op="+" class="op">+</button>
+
+    <button data-val="0" class="wide">0</button>
+    <button data-val=".">.</button>
+    <button id="calcEquals" class="eq">=</button>
+  </div>
+</div>
+
+<button class="side-toggle" id="todoToggle">To-Do</button>
+<div class="side-panel" id="todoPanel">
+  <div class="side-panel-head">
+    <span class="title">To-Do</span>
+    <button id="todoClose">✕</button>
+  </div>
+  <div class="todo-input-row">
+    <input type="text" id="todoInput" placeholder="Add a task..." autocomplete="off">
+    <button id="todoAdd">Add</button>
+  </div>
+  <ul id="todoList"></ul>
 </div>
 
 <div class="clock" id="clock">--:--</div>
@@ -738,6 +970,178 @@
     }
     resize();
     draw();
+  })();
+
+  // Scientific calculator
+  (function initCalculator(){
+    const toggle = document.getElementById('calcToggle');
+    const panel = document.getElementById('calcPanel');
+    const closeBtn = document.getElementById('calcClose');
+    const exprEl = document.getElementById('calcExpr');
+    const displayEl = document.getElementById('calcDisplay');
+    const clearBtn = document.getElementById('calcClear');
+    const equalsBtn = document.getElementById('calcEquals');
+
+    let expr = '';
+
+    toggle.addEventListener('click', ()=>{
+      panel.classList.toggle('open');
+    });
+    closeBtn.addEventListener('click', ()=> panel.classList.remove('open'));
+
+    function render(){
+      exprEl.textContent = expr;
+      displayEl.textContent = expr === '' ? '0' : expr;
+    }
+
+    document.querySelectorAll('#calcPanel [data-val]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        expr += btn.dataset.val;
+        render();
+      });
+    });
+    document.querySelectorAll('#calcPanel [data-op]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        expr += btn.dataset.op;
+        render();
+      });
+    });
+    document.querySelectorAll('#calcPanel [data-fn]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const fn = btn.dataset.fn;
+        if(fn === 'pi'){ expr += 'pi'; }
+        else { expr += fn + '('; }
+        render();
+      });
+    });
+
+    clearBtn.addEventListener('click', ()=>{
+      expr = '';
+      exprEl.textContent = '';
+      displayEl.textContent = '0';
+    });
+
+    equalsBtn.addEventListener('click', ()=>{
+      if(!expr){ return; }
+      try{
+        // translate friendly names into Math.* calls, degrees for trig
+        let safe = expr
+          .replace(/\^/g, '**')
+          .replace(/sin\(/g, 'Math.sin(rad(')
+          .replace(/cos\(/g, 'Math.cos(rad(')
+          .replace(/tan\(/g, 'Math.tan(rad(')
+          .replace(/log\(/g, 'Math.log10(')
+          .replace(/ln\(/g, 'Math.log(')
+          .replace(/sqrt\(/g, 'Math.sqrt(')
+          .replace(/pi/g, 'Math.PI');
+
+        // close the extra paren opened by rad( for trig functions
+        let openTrig = (expr.match(/sin\(|cos\(|tan\(/g) || []).length;
+        safe = safe.replace(/Math\.(sin|cos|tan)\(rad\(([^()]*)\)/g, 'Math.$1(rad($2))');
+
+        // only allow a safe character set before evaluating
+        if(/[^0-9+\-*/().,\s\w]/.test(safe.replace(/Math\.\w+/g, '').replace(/rad/g, ''))){
+          throw new Error('invalid characters');
+        }
+
+        const fn = new Function('rad', 'Math', `return (${safe});`);
+        const result = fn((deg)=> deg * Math.PI / 180, Math);
+
+        if(typeof result !== 'number' || !isFinite(result)){
+          throw new Error('invalid result');
+        }
+        const rounded = Math.round(result * 1e10) / 1e10;
+        exprEl.textContent = expr;
+        displayEl.textContent = String(rounded);
+        expr = String(rounded);
+      }catch(err){
+        displayEl.textContent = 'Error';
+        expr = '';
+      }
+    });
+
+    render();
+  })();
+
+  // To-do list
+  (function initTodo(){
+    const toggle = document.getElementById('todoToggle');
+    const panel = document.getElementById('todoPanel');
+    const closeBtn = document.getElementById('todoClose');
+    const input = document.getElementById('todoInput');
+    const addBtn = document.getElementById('todoAdd');
+    const listEl = document.getElementById('todoList');
+
+    let todos = [];
+    try{
+      const saved = localStorage.getItem('ntTodos');
+      if(saved) todos = JSON.parse(saved);
+    }catch(err){ todos = []; }
+
+    function save(){
+      try{ localStorage.setItem('ntTodos', JSON.stringify(todos)); }catch(err){}
+    }
+
+    function renderList(){
+      listEl.innerHTML = '';
+      if(todos.length === 0){
+        const empty = document.createElement('div');
+        empty.id = 'todoEmpty';
+        empty.textContent = 'No tasks yet.';
+        listEl.appendChild(empty);
+        return;
+      }
+      todos.forEach((todo, i)=>{
+        const li = document.createElement('li');
+        if(todo.done) li.classList.add('done');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = todo.done;
+        checkbox.addEventListener('change', ()=>{
+          todos[i].done = checkbox.checked;
+          save();
+          renderList();
+        });
+
+        const span = document.createElement('span');
+        span.textContent = todo.text;
+
+        const del = document.createElement('button');
+        del.className = 'del';
+        del.textContent = '✕';
+        del.addEventListener('click', ()=>{
+          todos.splice(i, 1);
+          save();
+          renderList();
+        });
+
+        li.appendChild(checkbox);
+        li.appendChild(span);
+        li.appendChild(del);
+        listEl.appendChild(li);
+      });
+    }
+
+    function addTodo(){
+      const text = input.value.trim();
+      if(!text) return;
+      todos.push({ text, done: false });
+      input.value = '';
+      save();
+      renderList();
+    }
+
+    toggle.addEventListener('click', ()=>{
+      panel.classList.toggle('open');
+    });
+    closeBtn.addEventListener('click', ()=> panel.classList.remove('open'));
+    addBtn.addEventListener('click', addTodo);
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter') addTodo();
+    });
+
+    renderList();
   })();
 </script>
 

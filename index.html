@@ -24,11 +24,11 @@
     background: var(--bg);
     color: var(--text);
     font-family:'Inter', sans-serif;
-    min-height:100vh;
+    height:100vh;
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding: 10vh 20px 40px;
+    padding: 6vh 20px 20px;
     position:relative;
     cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, auto;
   }
@@ -86,13 +86,18 @@
   body.light-wallpaper .chat-panel,
   body.light-wallpaper .settings-menu,
   body.light-wallpaper .chat-toggle,
-  body.light-wallpaper .settings-btn{
+  body.light-wallpaper .settings-btn,
+  body.light-wallpaper .side-panel,
+  body.light-wallpaper .side-toggle{
     background: rgba(255,255,255,0.65);
     border-color: rgba(0,0,0,0.14);
   }
   body.light-wallpaper .chat-msg.assistant{
     background: rgba(0,0,0,0.08);
   }
+  body.light-wallpaper .calc-grid button{ background: transparent; }
+  body.light-wallpaper .calc-grid button:hover{ background: rgba(0,0,0,0.08); }
+  body.light-wallpaper #todoList li:hover{ background: rgba(0,0,0,0.08); }
   body.light-wallpaper .search-console input::placeholder{ color: #6B7684; }
 
   .clock{
@@ -228,29 +233,6 @@
   .settings-menu button.danger:hover{ color: var(--red); }
 
   /* AI chat */
-  .chat-toggle{
-    position:fixed;
-    bottom:20px;
-    left:50%;
-    transform: translateX(-50%);
-    background: var(--panel);
-    border:1px solid var(--border);
-    color: var(--muted);
-    font-family:'Inter', sans-serif;
-    font-size:13px;
-    font-weight:500;
-    padding:10px 18px;
-    border-radius:999px;
-    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, auto;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    transition: border-color .15s ease, color .15s ease;
-    z-index:10;
-  }
-  .chat-toggle:hover{ border-color: var(--cyan); color: var(--text); }
-  .chat-toggle .dot{ width:6px; height:6px; border-radius:50%; background: var(--cyan); }
-
   /* Calculator + Todo side toggles */
   .side-toggle{
     position:fixed;
@@ -319,7 +301,7 @@
     font-family:'Chakra Petch', sans-serif;
     font-size:24px;
     font-weight:600;
-    color: var(--text);
+    color: #E6E9EE;
     background:#0F1216;
     min-height:34px;
     overflow-x:auto;
@@ -329,7 +311,7 @@
     padding:0 14px;
     text-align:right;
     font-size:11px;
-    color: var(--muted);
+    color: #7A8494;
     min-height:14px;
     background:#0F1216;
   }
@@ -418,23 +400,19 @@
   #todoEmpty{ padding:16px; text-align:center; color: var(--muted); font-size:12px; }
 
   .chat-panel{
-    position:fixed;
-    bottom:0;
-    left:50%;
-    transform: translateX(-50%);
     width:100%;
     max-width:560px;
     background: var(--panel);
     border:1px solid var(--border);
-    border-bottom:none;
-    border-radius:14px 14px 0 0;
-    display:none;
+    border-radius:14px;
+    display:flex;
     flex-direction:column;
-    max-height:60vh;
-    z-index:20;
-    box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
+    flex:1;
+    min-height:0;
+    margin-top:20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    overflow:hidden;
   }
-  .chat-panel.open{ display:flex; }
 
   .chat-head{
     display:flex;
@@ -453,11 +431,15 @@
     background:transparent;
     border:none;
     color: var(--muted);
-    font-size:16px;
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    font-weight:500;
     cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, auto;
     line-height:1;
+    padding:4px 8px;
+    border-radius:6px;
   }
-  .chat-head button:hover{ color: var(--text); }
+  .chat-head button:hover{ color: var(--text); background: rgba(255,255,255,0.06); }
 
   .chat-messages{
     flex:1;
@@ -517,21 +499,6 @@
   <button id="setApiKeyBtn">Set AI API key</button>
 </div>
 <input type="file" id="wallpaperInput" accept="image/*" style="display:none">
-
-<button class="chat-toggle" id="chatToggle"><span class="dot"></span>Ask AI</button>
-<div class="chat-panel" id="chatPanel">
-  <div class="chat-head">
-    <span class="title">AI ASSISTANT</span>
-    <button id="chatClose">✕</button>
-  </div>
-  <div class="chat-messages" id="chatMessages">
-    <div class="chat-msg system">Add your free Groq API key via the gear menu to start chatting.</div>
-  </div>
-  <div class="chat-input-row">
-    <input type="text" id="chatInput" placeholder="Ask anything..." autocomplete="off">
-    <button id="chatSend">Send</button>
-  </div>
-</div>
 
 <button class="side-toggle" id="calcToggle">Calc</button>
 <div class="side-panel" id="calcPanel">
@@ -594,13 +561,6 @@
 <div class="clock" id="clock">--:--</div>
 <div class="date" id="date">loading</div>
 
-<div class="search-wrap">
-  <form class="search-console" id="searchForm">
-    <input type="text" id="searchInput" placeholder="Search Brave..." autofocus autocomplete="off">
-    <button type="submit">Search</button>
-  </form>
-</div>
-
 <div class="stats">
   <div class="stat">
     <span class="label">Ping</span>
@@ -616,6 +576,27 @@
     <span class="label">Connection</span>
     <span class="value" id="statusValue">--</span>
     <span class="sub" id="statusSub">checking</span>
+  </div>
+</div>
+
+<div class="search-wrap" style="margin-bottom:0;">
+  <form class="search-console" id="searchForm">
+    <input type="text" id="searchInput" placeholder="Search Brave..." autofocus autocomplete="off">
+    <button type="submit">Search</button>
+  </form>
+</div>
+
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <span class="title">AI ASSISTANT</span>
+    <button id="chatClose">Clear</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg system">Add your free Groq API key via the gear menu to start chatting.</div>
+  </div>
+  <div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Ask anything..." autocomplete="off">
+    <button id="chatSend">Send</button>
   </div>
 </div>
 
@@ -772,7 +753,6 @@
   });
 
   // AI chat
-  const chatToggle = document.getElementById('chatToggle');
   const chatPanel = document.getElementById('chatPanel');
   const chatClose = document.getElementById('chatClose');
   const chatMessages = document.getElementById('chatMessages');
@@ -785,14 +765,7 @@
 
   let history = [];
 
-  chatToggle.addEventListener('click', ()=>{
-    chatPanel.classList.add('open');
-    chatToggle.style.display = 'none';
-    chatInput.focus();
-  });
   chatClose.addEventListener('click', ()=>{
-    chatPanel.classList.remove('open');
-    chatToggle.style.display = 'flex';
     history = [];
     chatMessages.innerHTML = '<div class="chat-msg system">Chat cleared. Ask anything to start a new conversation.</div>';
   });

@@ -641,77 +641,99 @@
     z-index:5;
   }
 
-  /* Bookmarks sidebar */
-  .bookmarks-toggle{
+
+  /* Bookmarks dock (Windows/macOS-style shortcut dock) */
+  .bookmarks-dock{
     position:fixed;
-    top:18px;
-    left:18px;
-    width:36px;
-    height:36px;
+    left:16px;
+    top:50%;
+    transform: translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    z-index:10;
+    max-height:80vh;
+    overflow-y:auto;
+    padding:4px;
+  }
+  .dock-icon{
+    position:relative;
+    width:44px;
+    height:44px;
+    border-radius:12px;
+    background: var(--panel);
+    border:1px solid var(--border);
     display:flex;
     align-items:center;
     justify-content:center;
-    background: var(--panel);
-    border:1px solid var(--border);
-    border-radius:50%;
-    color: var(--muted);
+    text-decoration:none;
+    flex-shrink:0;
     cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
-    font-size:15px;
-    transition: color .15s ease, border-color .15s ease, transform .15s ease;
-    z-index:10;
+    transition: transform .15s ease, border-color .15s ease;
+    animation: fadeSlideIn 0.2s ease both;
   }
-  .bookmarks-toggle:hover{ color: var(--cyan); border-color: var(--cyan); }
-
-  .bookmarks-sidebar{
-    position:fixed;
-    top:0;
-    left:0;
-    bottom:0;
-    width:280px;
-    max-width:85vw;
-    background: var(--panel);
-    border-right:1px solid var(--border);
-    display:flex;
-    flex-direction:column;
-    z-index:25;
-    transform: translateX(-100%);
-    transition: transform 0.22s ease;
-    box-shadow: 10px 0 40px rgba(0,0,0,0.35);
+  .dock-icon:hover{ transform: scale(1.08); border-color: var(--cyan); }
+  .dock-icon img{
+    width:22px; height:22px;
+    border-radius:5px;
   }
-  .bookmarks-sidebar.open{ transform: translateX(0); }
-
-  .bookmarks-head{
+  .dock-icon .dock-remove{
+    position:absolute;
+    top:-5px; right:-5px;
+    width:16px; height:16px;
+    border-radius:50%;
+    background: var(--red);
+    color:#fff;
+    font-size:9px;
+    line-height:1;
     display:flex;
     align-items:center;
-    justify-content:space-between;
-    padding:16px;
-    border-bottom:1px solid var(--border);
-  }
-  .bookmarks-head .title{
-    font-family:'Chakra Petch', sans-serif;
-    font-size:13px;
-    font-weight:600;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-  }
-  .bookmarks-head button{
-    background:transparent;
-    border:none;
-    color: var(--muted);
-    font-size:16px;
+    justify-content:center;
+    opacity:0;
+    transition: opacity .12s ease, transform .12s ease;
     cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
-    line-height:1;
+    border:none;
   }
-  .bookmarks-head button:hover{ color: var(--text); }
+  .dock-icon:hover .dock-remove{ opacity:1; }
+  .dock-icon .dock-remove:hover{ transform: scale(1.15); }
+  .dock-icon.leaving{
+    opacity:0; transform: scale(0.6); pointer-events:none;
+  }
 
-  .bookmark-add-form{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-    padding:12px 16px;
-    border-bottom:1px solid var(--border);
+  .dock-add-btn{
+    color: var(--muted);
+    font-size:20px;
+    font-weight:300;
+    border-style:dashed;
   }
-  .bookmark-add-form input{
+  .dock-add-btn:hover{ color: var(--cyan); }
+
+  .dock-add-popover{
+    position:fixed;
+    left:72px;
+    top:50%;
+    transform: translateY(-50%) scale(0.95);
+    width:220px;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+    display:none;
+    flex-direction:column;
+    gap:8px;
+    z-index:20;
+    opacity:0;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+  .dock-add-popover.open{
+    display:flex; opacity:1; transform: translateY(-50%) scale(1);
+  }
+  .dock-add-popover.closing{
+    display:flex; opacity:0; transform: translateY(-50%) scale(0.95);
+  }
+  .dock-add-popover input{
     background:#0F1216;
     border:1px solid var(--border);
     border-radius:7px;
@@ -721,8 +743,9 @@
     padding:8px 10px;
     outline:none;
   }
-  .bookmark-add-form input:focus{ border-color: var(--cyan); }
-  .bookmark-add-form button{
+  .dock-add-popover input:focus{ border-color: var(--cyan); }
+  .dock-add-popover input.shake{ animation: shake 0.35s ease; border-color: var(--red); }
+  .dock-add-popover button{
     background: var(--cyan);
     color:#0F1216;
     border:none;
@@ -732,64 +755,13 @@
     font-size:12px;
     padding:8px 0;
     cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
-    margin-top:2px;
   }
 
-  #bookmarksList{
-    list-style:none;
-    overflow-y:auto;
-    padding:8px;
-    flex:1;
-  }
-  #bookmarksList li{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:9px 8px;
-    border-radius:8px;
-    animation: fadeSlideIn 0.2s ease both;
-    transition: opacity .16s ease, transform .16s ease, max-height .16s ease, padding .16s ease, margin .16s ease;
-  }
-  #bookmarksList li.leaving{
-    opacity:0; transform: translateX(-10px); max-height:0; padding-top:0; padding-bottom:0; overflow:hidden;
-  }
-  #bookmarksList li:hover{ background:#1F2530; }
-  #bookmarksList li img{
-    width:18px; height:18px;
-    border-radius:4px;
-    flex-shrink:0;
-    background:#0F1216;
-  }
-  #bookmarksList li a{
-    flex:1;
-    color: var(--text);
-    text-decoration:none;
-    font-size:13px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  #bookmarksList li a:hover{ color: var(--cyan); }
-  #bookmarksList li .del{
-    background:transparent;
-    border:none;
-    color: var(--muted);
-    font-size:12px;
-    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDE1IDE1Ij48ZyBvcGFjaXR5PSIwLjc1Ij48ZyBmaWxsPSJibGFjayI+PHJlY3QgeD0iMCIgeT0iNiIgd2lkdGg9IjgiIGhlaWdodD0iMyIvPjxyZWN0IHg9IjciIHk9IjYiIHdpZHRoPSI4IiBoZWlnaHQ9IjMiLz48cmVjdCB4PSI2IiB5PSIwIiB3aWR0aD0iMyIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iNiIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iOCIvPjwvZz48ZyBmaWxsPSJ3aGl0ZSI+PHJlY3QgeD0iMSIgeT0iNyIgd2lkdGg9IjYiIGhlaWdodD0iMSIvPjxyZWN0IHg9IjgiIHk9IjciIHdpZHRoPSI2IiBoZWlnaHQ9IjEiLz48cmVjdCB4PSI3IiB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSI2Ii8+PHJlY3QgeD0iNyIgeT0iOCIgd2lkdGg9IjEiIGhlaWdodD0iNiIvPjwvZz48L2c+PC9zdmc+") 7 7, pointer;
-    opacity:0;
-    transition: opacity .1s ease;
-    flex-shrink:0;
-  }
-  #bookmarksList li:hover .del{ opacity:1; }
-  #bookmarksList li .del:hover{ color: var(--red); }
-  #bookmarksEmpty{ padding:20px 16px; text-align:center; color: var(--muted); font-size:12px; }
-
-  body.light-wallpaper .bookmarks-sidebar,
-  body.light-wallpaper .bookmarks-toggle{
+  body.light-wallpaper .dock-icon,
+  body.light-wallpaper .dock-add-popover{
     background: rgba(255,255,255,0.85);
     border-color: rgba(0,0,0,0.14);
   }
-  body.light-wallpaper #bookmarksList li:hover{ background: rgba(0,0,0,0.08); }
 </style>
 </head>
 <body>
@@ -797,19 +769,14 @@
 <canvas id="particleCanvas"></canvas>
 <div id="wallpaper"></div>
 
-<button class="bookmarks-toggle" id="bookmarksToggle" title="Bookmarks"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
-<div class="bookmarks-sidebar" id="bookmarksSidebar">
-  <div class="bookmarks-head">
-    <span class="title">Bookmarks</span>
-    <button id="bookmarksClose">✕</button>
-  </div>
-  <form class="bookmark-add-form" id="bookmarkAddForm">
-    <input type="text" id="bookmarkName" placeholder="Name" autocomplete="off">
-    <input type="text" id="bookmarkUrl" placeholder="URL (e.g. github.com)" autocomplete="off">
-    <button type="submit">Add Bookmark</button>
-  </form>
-  <ul id="bookmarksList"></ul>
+<div class="bookmarks-dock" id="bookmarksDock">
+  <button class="dock-icon dock-add-btn" id="dockAddBtn" title="Add bookmark">+</button>
 </div>
+<form class="dock-add-popover" id="dockAddPopover">
+  <input type="text" id="bookmarkName" placeholder="Name" autocomplete="off">
+  <input type="text" id="bookmarkUrl" placeholder="URL (e.g. github.com)" autocomplete="off">
+  <button type="submit">Add</button>
+</form>
 
 <button class="settings-btn" id="settingsBtn" title="Settings">⚙</button>
 <div class="settings-menu" id="settingsMenu">
@@ -1313,15 +1280,13 @@
     draw();
   })();
 
-  // Bookmarks sidebar
+  // Bookmarks dock
   (function initBookmarks(){
-    const toggle = document.getElementById('bookmarksToggle');
-    const sidebar = document.getElementById('bookmarksSidebar');
-    const closeBtn = document.getElementById('bookmarksClose');
-    const form = document.getElementById('bookmarkAddForm');
+    const dock = document.getElementById('bookmarksDock');
+    const addBtn = document.getElementById('dockAddBtn');
+    const popover = document.getElementById('dockAddPopover');
     const nameInput = document.getElementById('bookmarkName');
     const urlInput = document.getElementById('bookmarkUrl');
-    const listEl = document.getElementById('bookmarksList');
 
     let bookmarks = [];
     try{
@@ -1351,34 +1316,27 @@
     }
 
     function render(){
-      listEl.innerHTML = '';
-      if(bookmarks.length === 0){
-        const empty = document.createElement('div');
-        empty.id = 'bookmarksEmpty';
-        empty.textContent = 'No bookmarks yet.';
-        listEl.appendChild(empty);
-        return;
-      }
+      dock.querySelectorAll('.dock-icon:not(.dock-add-btn)').forEach(el => el.remove());
       bookmarks.forEach((bm, i)=>{
-        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.className = 'dock-icon';
+        a.href = bm.url;
+        a.target = '_blank';
+        a.title = bm.name || bm.url;
 
         const img = document.createElement('img');
         img.src = faviconFor(bm.url);
         img.alt = '';
         img.onerror = ()=>{ img.style.visibility = 'hidden'; };
 
-        const a = document.createElement('a');
-        a.href = bm.url;
-        a.target = '_blank';
-        a.textContent = bm.name || bm.url;
-        a.title = bm.url;
-
         const del = document.createElement('button');
-        del.className = 'del';
+        del.className = 'dock-remove';
         del.textContent = '✕';
+        del.title = 'Remove';
         del.addEventListener('click', (e)=>{
           e.preventDefault();
-          li.classList.add('leaving');
+          e.stopPropagation();
+          a.classList.add('leaving');
           setTimeout(()=>{
             bookmarks.splice(i, 1);
             save();
@@ -1386,36 +1344,44 @@
           }, 160);
         });
 
-        li.appendChild(img);
-        li.appendChild(a);
-        li.appendChild(del);
-        listEl.appendChild(li);
+        a.appendChild(img);
+        a.appendChild(del);
+        dock.insertBefore(a, addBtn);
       });
     }
 
-    function openSidebar(){
-      sidebar.classList.add('open');
+    function openPopover(){
+      popover.classList.remove('closing');
+      popover.classList.add('open');
+      urlInput.focus();
     }
-    function closeSidebar(){
-      sidebar.classList.remove('open');
+    function closePopover(){
+      popover.classList.add('closing');
+      popover.classList.remove('open');
+      setTimeout(()=> popover.classList.remove('closing'), 160);
     }
 
-    toggle.addEventListener('click', ()=>{
-      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    addBtn.addEventListener('click', ()=>{
+      popover.classList.contains('open') ? closePopover() : openPopover();
     });
-    closeBtn.addEventListener('click', closeSidebar);
     document.addEventListener('click', (e)=>{
-      if(sidebar.classList.contains('open') &&
-         !sidebar.contains(e.target) &&
-         e.target !== toggle){
-        closeSidebar();
+      if(popover.classList.contains('open') &&
+         !popover.contains(e.target) &&
+         e.target !== addBtn){
+        closePopover();
       }
     });
 
-    form.addEventListener('submit', (e)=>{
+    popover.addEventListener('submit', (e)=>{
       e.preventDefault();
       const rawUrl = urlInput.value.trim();
-      if(!rawUrl) return;
+      if(!rawUrl){
+        urlInput.classList.remove('shake');
+        void urlInput.offsetWidth;
+        urlInput.classList.add('shake');
+        urlInput.focus();
+        return;
+      }
       const url = normalizeUrl(rawUrl);
       const name = nameInput.value.trim() || (()=>{
         try{ return new URL(url).hostname.replace(/^www\./, ''); }
@@ -1426,6 +1392,7 @@
       urlInput.value = '';
       save();
       render();
+      closePopover();
     });
 
     render();
@@ -1433,7 +1400,7 @@
 
   // A little ripple burst wherever the empty background is clicked
   document.addEventListener('click', (e)=>{
-    const interactive = e.target.closest('button, input, a, .side-panel, .chat-panel, .settings-menu, .search-console, .bookmarks-sidebar');
+    const interactive = e.target.closest('button, input, a, .side-panel, .chat-panel, .settings-menu, .search-console, .bookmarks-dock, .dock-add-popover');
     if(interactive) return;
     const burst = document.createElement('div');
     burst.className = 'click-burst';
